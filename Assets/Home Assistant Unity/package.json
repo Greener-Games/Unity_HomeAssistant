@@ -1,0 +1,11 @@
+{
+  "name": "com.greenergames.unity-home-assistant",
+  "displayName": "Unity Home Assistant",
+  "description": "Home Assistant Wrapper for Unity",
+  "version": "0.0.1",
+  "unity": "2018.1",
+  "license": "MIT",
+  "author": {
+    "name": "Greener Games"
+  }
+}
