@@ -2,23 +2,24 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
+[System.Serializable]
 public class StateObject
 {
     [JsonProperty("entity_id")]
-    public string EntityId { get; set; }
+    public string EntityId;
 
     [JsonProperty("state")]
-    public string State { get; set; }
+    public string State;
 
     [JsonProperty("attributes")]
-    public Dictionary<string,string> Attributes { get; set; }
+    public Dictionary<string, string> Attributes;
 
     [JsonProperty("last_changed")]
-    public DateTimeOffset LastChanged { get; set; }
+    public DateTimeOffset LastChanged;
 
     [JsonProperty("last_updated")]
-    public DateTimeOffset LastUpdated { get; set; }
+    public DateTimeOffset LastUpdated;
 
     [JsonProperty("context")]
-    public ContextObject ContextObject { get; set; }
+    public ContextObject ContextObject;
 }

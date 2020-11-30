@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -29,7 +31,20 @@ public class RequestClient : MonoBehaviour
     /// </summary>
     /// <returns>A <see cref="StateObject" /> representing the current state of the requested <paramref name="entityId" />.</returns>
     public static async Task<StateObject> GetState(string entityId) => await Get<StateObject>($"api/states/{entityId}");
-    
+
+
+    /// <summary>
+    /// Returns an array of state changes in the past. Each object contains further details for the entities
+    /// </summary>
+    /// <returns>A <see cref="StateObject" />History of an entity<paramref name="entityId" />.</returns>
+    public static async Task<History> GetHistory(string entityId, DateTimeOffset timeStamp)
+    {
+        List<StateObject> history = (await Get<List<List<StateObject>>>($"api/history/period/{timeStamp.UtcDateTime:yyyy-MM-dd\\THH:mm:ss\\+00\\:00}?filter_entity_id={entityId}")).First();
+        return new History()
+        {
+            history = history,
+        };
+    }
     
     /// <summary>
     /// Performs a GET request
