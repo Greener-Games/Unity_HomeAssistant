@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Sirenix.OdinInspector;
+using Sirenix.Serialization;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Entity : MonoBehaviour
+public class Entity : SerializedMonoBehaviour
 {
     public string entityId;
     
+    [OdinSerialize][NonSerialized]
     public StateObject rawData;
 
     public UnityAction DataFetched;

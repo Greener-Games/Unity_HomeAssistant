@@ -3,10 +3,10 @@ using System.Threading.Tasks;
 
 public class SensorEntity : Entity
 {
-    public History history;
+    public HistoryObject historyObject;
     
     protected override async Task CustomFetchData()
     {
-        history = await RequestClient.GetHistory(entityId, DateTime.Now.AddDays(-1));
+        historyObject = await RequestClient.GetHistory(entityId, DateTime.Now,true);
     }
 }

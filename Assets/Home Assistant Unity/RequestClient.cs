@@ -37,10 +37,11 @@ public class RequestClient : MonoBehaviour
     /// Returns an array of state changes in the past. Each object contains further details for the entities
     /// </summary>
     /// <returns>A <see cref="StateObject" />History of an entity<paramref name="entityId" />.</returns>
-    public static async Task<History> GetHistory(string entityId, DateTimeOffset timeStamp)
+    public static async Task<HistoryObject> GetHistory(string entityId, DateTimeOffset timeStamp, bool minimalResponse)
     {
-        List<StateObject> history = (await Get<List<List<StateObject>>>($"api/history/period/{timeStamp.UtcDateTime:yyyy-MM-dd\\THH:mm:ss\\+00\\:00}?filter_entity_id={entityId}")).First();
-        return new History()
+        List<StateObject> history = (await Get<List<List<StateObject>>>($"api/history/period/{timeStamp.UtcDateTime:yyyy-MM-dd\\THH:mm:ss\\+00\\:00}" +
+                                                                        $"?filter_entity_id={entityId}")).First();
+        return new HistoryObject()
         {
             history = history,
         };
