@@ -62,7 +62,15 @@ public class RequestClient : MonoBehaviour
 
             if (!request.isHttpError)
             {
-                return JsonConvert.DeserializeObject<T>(request.downloadHandler.text);
+                try
+                {
+                    return JsonConvert.DeserializeObject<T>(request.downloadHandler.text);
+
+                }
+                catch (Exception e)
+                {
+                    throw new Exception($"Web Request Error in {request.uri} : Error {request.error}");
+                }
             }
             else
             {

@@ -12,13 +12,13 @@ public class StateObject
     public string State;
 
     [JsonProperty("attributes")]
-    public Dictionary<string, string> Attributes;
+    public Dictionary<string, dynamic> Attributes;
 
     [JsonProperty("last_changed")]
-    public DateTimeOffset LastChanged;
+    public DateTime LastChanged;
 
     [JsonProperty("last_updated")]
-    public DateTimeOffset LastUpdated;
+    public DateTime LastUpdated;
 
     [JsonProperty("context")]
     public ContextObject ContextObject;
