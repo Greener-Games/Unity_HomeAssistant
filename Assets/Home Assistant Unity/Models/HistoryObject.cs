@@ -39,4 +39,34 @@ public class HistoryObject
             return returnStates;
         }
     }
+    
+    public List<StateObject> AverageDay
+    {
+        get
+        {
+            List<StateObject> returnStates = new List<StateObject>();
+            DateTime currentTime = history[0].LastUpdated.RoundDown(TimeSpan.FromDays(1));
+            List<StateObject> inTime = new List<StateObject>();
+            foreach (StateObject stateObject in history)
+            {
+                if (stateObject.LastUpdated < currentTime.AddDays(1))
+                {
+                    inTime.Add(stateObject);
+                }
+                else
+                {
+                    StateObject so = new StateObject();
+                    so.LastUpdated = currentTime;
+                    so.State = Enumerable.Average(inTime.Select(x => float.Parse(x.State))).ToString();
+                    returnStates.Add(so);
+
+                    inTime = new List<StateObject>();
+                    currentTime = currentTime.AddDays(1);
+                    inTime.Add(stateObject);
+                }
+            }
+
+            return returnStates;
+        }
+    }
 }

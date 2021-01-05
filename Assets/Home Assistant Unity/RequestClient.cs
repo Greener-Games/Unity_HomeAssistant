@@ -37,10 +37,11 @@ public class RequestClient : MonoBehaviour
     /// Returns an array of state changes in the past. Each object contains further details for the entities
     /// </summary>
     /// <returns>A <see cref="StateObject" />History of an entity<paramref name="entityId" />.</returns>
-    public static async Task<HistoryObject> GetHistory(string entityId, DateTimeOffset timeStamp, bool minimalResponse)
+    public static async Task<HistoryObject> GetHistory(string entityId, DateTimeOffset timeStamp, TimeSpan timeSpan, bool minimalResponse)
     {
-        List<StateObject> history = (await Get<List<List<StateObject>>>($"api/history/period/{timeStamp.UtcDateTime:yyyy-MM-dd\\THH:mm:ss\\+00\\:00}" +
-                                                                        $"?filter_entity_id={entityId}")).First();
+        List<StateObject> history = (await Get<List<List<StateObject>>>($"api/history/period/{(timeStamp -timeSpan).UtcDateTime:yyyy-MM-dd\\THH:mm:ss}" +
+                                                                        $"?filter_entity_id={entityId}"+
+                                                                        $"&end_time={timeStamp.UtcDateTime:yyyy-MM-dd\\THH:mm:ss}")).First();
         return new HistoryObject()
         {
             history = history,
@@ -53,7 +54,7 @@ public class RequestClient : MonoBehaviour
     /// <param name="path">API Endpoint</param>
     /// <typeparam name="T">Type of data expected on the return</typeparam>
     /// <returns></returns>
-    protected static async Task<T> Get<T>(string path) where T : class
+    public static async Task<T> Get<T>(string path) where T : class
     {
         using (UnityWebRequest request = UnityWebRequest.Get(HomeAssistantManager.hostAddress + path))
         {
@@ -87,7 +88,7 @@ public class RequestClient : MonoBehaviour
     /// <param name="body">Content within the post request</param>
     /// <typeparam name="T">Type expected back</typeparam>
     /// <returns></returns>
-    protected static async Task<T> Post<T>(string path, object body) where T : class
+    public static async Task<T> Post<T>(string path, object body) where T : class
     {
         return await Post<T>(path, JsonConvert.SerializeObject(body));
     }
@@ -99,7 +100,7 @@ public class RequestClient : MonoBehaviour
     /// <param name="body">Content within the post request</param>
     /// <typeparam name="T">Type expected back</typeparam>
     /// <returns></returns>
-    protected static async Task<T> Post<T>(string path, string body) where T : class
+    public static async Task<T> Post<T>(string path, string body) where T : class
     {
         using (UnityWebRequest request = UnityWebRequest.Post(HomeAssistantManager.hostAddress + path,"")) //No data passed here as need json and have to do manually
         {

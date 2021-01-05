@@ -5,7 +5,8 @@ using Sirenix.Serialization;
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Entity : SerializedMonoBehaviour
+[Serializable]
+public class Entity
 {
     public string entityId;
     
@@ -17,9 +18,9 @@ public class Entity : SerializedMonoBehaviour
     public string State => rawData.State;
     
     // Start is called before the first frame update
-    protected virtual void Start()
+    public virtual void FetchData()
     {
-        Debug.Log($"Fetching Data {gameObject.name}");
+        Debug.Log($"Fetching Data {entityId}");
         FetchBaseData();
     }
     
