@@ -19,7 +19,7 @@ public class WeatherEntity : Entity
     public JArray RawForecast => (JArray) rawData.Attributes["forecast"];
     public List<ForecastObject> forecast = new List<ForecastObject>();
 
-    protected override async Task CustomFetchData()
+    protected override async Task ProcessFetchedData()
     {
         foreach (JToken jToken in RawForecast)
         {

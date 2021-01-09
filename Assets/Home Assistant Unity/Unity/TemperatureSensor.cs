@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class TempSensor : SensorEntity
+public class TemperatureSensor : SensorEntity
 {
     
 }
