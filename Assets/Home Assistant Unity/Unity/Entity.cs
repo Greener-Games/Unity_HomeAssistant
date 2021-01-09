@@ -29,7 +29,7 @@ public abstract class Entity : SerializedMonoBehaviour
 
     async Task StartRefreshLoop()
     {
-        while (isActiveAndEnabled)
+        while (gameObject.activeInHierarchy && enabled)
         {
             await new WaitForSeconds(refreshRateSeconds);
             await FetchData();
