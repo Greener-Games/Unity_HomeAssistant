@@ -1,72 +1,68 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
+using UnityEngine;
 
 [System.Serializable]
 public class HistoryObject
-{
+{ 
     [OdinSerialize][NonSerialized][ShowInInspector]
     public List<StateObject> history;
 
-    public List<StateObject> AverageHour
+    public List<StateObject> AverageHour => ProcessData(history[0].LastUpdated.RoundDown(TimeSpan.FromHours(1)), TimeSpan.FromHours(1));
+
+    public List<StateObject> AverageDay => ProcessData(history[0].LastUpdated.RoundDown(TimeSpan.FromDays(1)), TimeSpan.FromDays(1));
+
+    public List<StateObject> AverageWeek => ProcessData(history[0].LastUpdated.StartOfWeek(DayOfWeek.Monday), TimeSpan.FromDays(7));
+
+    List<StateObject> ProcessData(DateTime start, TimeSpan ts)
     {
-        get
+        List<StateObject> returnStates = new List<StateObject>();
+        List<float> inTime = new List<float>();
+
+        DateTime currentTime = start;
+
+        int totalProcessed = 0;
+        
+        foreach (StateObject stateObject in history)
         {
-            List<StateObject> returnStates = new List<StateObject>();
-            DateTime currentTime = history[0].LastUpdated.RoundDown(TimeSpan.FromHours(1));
-            List<StateObject> inTime = new List<StateObject>();
-            foreach (StateObject stateObject in history)
+            if (float.TryParse(stateObject.State, out float f))
             {
-                if (stateObject.LastUpdated < currentTime.AddHours(1))
+                if (stateObject.LastUpdated < currentTime.Add(ts))
                 {
-                    inTime.Add(stateObject);
+                    inTime.Add(f);
                 }
                 else
                 {
-                    StateObject so = new StateObject();
-                    so.LastUpdated = currentTime;
-                    so.State = Enumerable.Average(inTime.Select(x => float.Parse(x.State))).ToString();
+                    StateObject so = new StateObject
+                    {
+                        LastUpdated = currentTime, 
+                        State = inTime.Average().ToString(CultureInfo.InvariantCulture)
+                    };
                     returnStates.Add(so);
+                    totalProcessed += inTime.Count;
 
-                    inTime = new List<StateObject>();
-                    currentTime = currentTime.AddHours(1);
-                    inTime.Add(stateObject);
+                    inTime = new List<float>();
+                    currentTime = currentTime.Add(ts);
+                    inTime.Add(f);
                 }
             }
-
-            return returnStates;
         }
-    }
-    
-    public List<StateObject> AverageDay
-    {
-        get
+
+        //add the last element if needed as not a complete loop for bigger data sets
+        if (totalProcessed != history.Count)
         {
-            List<StateObject> returnStates = new List<StateObject>();
-            DateTime currentTime = history[0].LastUpdated.RoundDown(TimeSpan.FromDays(1));
-            List<StateObject> inTime = new List<StateObject>();
-            foreach (StateObject stateObject in history)
+            StateObject final = new StateObject
             {
-                if (stateObject.LastUpdated < currentTime.AddDays(1))
-                {
-                    inTime.Add(stateObject);
-                }
-                else
-                {
-                    StateObject so = new StateObject();
-                    so.LastUpdated = currentTime;
-                    so.State = Enumerable.Average(inTime.Select(x => float.Parse(x.State))).ToString();
-                    returnStates.Add(so);
-
-                    inTime = new List<StateObject>();
-                    currentTime = currentTime.AddDays(1);
-                    inTime.Add(stateObject);
-                }
-            }
-
-            return returnStates;
+                LastUpdated = currentTime,
+                State = inTime.Average().ToString(CultureInfo.InvariantCulture)
+            };
+            returnStates.Add(final);
         }
+
+        return returnStates;
     }
 }

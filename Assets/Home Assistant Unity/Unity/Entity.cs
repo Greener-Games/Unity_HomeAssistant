@@ -24,7 +24,6 @@ public abstract class Entity : SerializedMonoBehaviour
     void OnEnable()
     {
         FetchData();
-        
         StartRefreshLoop();
     }
 

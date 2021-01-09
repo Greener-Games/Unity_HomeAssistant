@@ -1,7 +1,8 @@
 {
     "name": "HomeAssistant",
     "references": [
-        "GUID:6f099b00ee0d34f4eb8ef168f15e5087"
+        "GUID:6f099b00ee0d34f4eb8ef168f15e5087",
+        "GUID:b441feee6eb5a0348a4fcf3938bcd3ba"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
