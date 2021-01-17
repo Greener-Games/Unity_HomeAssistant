@@ -42,9 +42,9 @@ public class RequestClient : MonoBehaviour
     /// <returns></returns>
     public static async Task<T> Get<T>(string path) where T : class
     {
-        using (UnityWebRequest request = UnityWebRequest.Get(HomeAssistantManager.hostAddress + path))
+        using (UnityWebRequest request = UnityWebRequest.Get(HomeAssistantManager._hostAddress + path))
         {
-            request.SetRequestHeader("Authorization", "Bearer " + HomeAssistantManager.apiKey);
+            request.SetRequestHeader("Authorization", "Bearer " + HomeAssistantManager._apiKey);
 
             await request.SendWebRequest();
 
@@ -88,9 +88,9 @@ public class RequestClient : MonoBehaviour
     /// <returns></returns>
     public static async Task<T> Post<T>(string path, string body) where T : class
     {
-        using (UnityWebRequest request = UnityWebRequest.Post(HomeAssistantManager.hostAddress + path,"")) //No data passed here as need json and have to do manually
+        using (UnityWebRequest request = UnityWebRequest.Post(HomeAssistantManager._hostAddress + path,"")) //No data passed here as need json and have to do manually
         {
-            request.SetRequestHeader("Authorization", "Bearer " + HomeAssistantManager.apiKey);
+            request.SetRequestHeader("Authorization", "Bearer " + HomeAssistantManager._apiKey);
             byte[] bodyRaw = Encoding.UTF8.GetBytes(body);
             request.uploadHandler = new UploadHandlerRaw(bodyRaw);
             request.SetRequestHeader("Content-Type", "application/json");

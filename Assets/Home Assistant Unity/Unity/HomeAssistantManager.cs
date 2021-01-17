@@ -1,10 +1,18 @@
 ﻿using UnityEngine;
 
-
+[DefaultExecutionOrder(-1000)]
 public class HomeAssistantManager : MonoBehaviour
 {
-    internal static string hostAddress;
-    internal static string apiKey;
+    public string address;
+    public string longLifeToken;
+    
+    public static string _hostAddress;
+    public static string _apiKey;
+    
+    void Awake()
+    {
+        Initialize(address, longLifeToken);
+    }
     
     /// <summary>
     /// Initialise the client for all future requests
@@ -13,7 +21,7 @@ public class HomeAssistantManager : MonoBehaviour
     /// <param name="accessToken">The Home Assistant access token.</param>
     public static void Initialize(string address, string accessToken)
     {
-        hostAddress = address;
-        apiKey = accessToken;
+        _hostAddress = address;
+        _apiKey = accessToken;
     }
 }
