@@ -19,7 +19,7 @@ public abstract class Entity : SerializedMonoBehaviour
     [OdinSerialize][NonSerialized][ReadOnly]
     public StateObject rawData = new StateObject();
 
-    public UnityAction dataFetched;
+    public UnityAction<Entity> dataFetched;
 
     public float refreshRateSeconds = 300;
     
@@ -58,8 +58,14 @@ public abstract class Entity : SerializedMonoBehaviour
         
         rawData = await RequestClient.GetState(entityId);
         lastDataFetchTime = DateTime.Now;
+
+        await ProcessData();
+        dataFetched?.Invoke(this);
+    }
+
+    protected virtual async Task ProcessData()
+    {
         
-        dataFetched?.Invoke();
     }
     
     public virtual async Task FetchHistory(TimeSpan timeSpan)

@@ -30,11 +30,11 @@ public class StateObject
     [JsonProperty("context")]
     public ContextObject contextObject;
 
-    public T GetValue<T>(string key) where T : class
+    public T GetValue<T>(string key)
     {
         if (attributes != null && attributes.ContainsKey(key))
         {
-            return attributes[key] as T;
+            return (T)attributes[key];
         }
         else
         {

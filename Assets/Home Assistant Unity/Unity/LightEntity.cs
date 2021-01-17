@@ -7,12 +7,15 @@ using UnityEngine;
 [Serializable]
 public class LightEntity : Entity
 {
+    public bool LightOn => State == "on";
+    
     [Button]
     public async void TurnOn()
     {
         Dictionary<string, object> body = new Dictionary<string, object>();
         body.Add("entity_id", entityId);
-        await RequestClient.Post<StateObject>($"api/services/light/turn_on", body);
+        rawData = await RequestClient.Post<StateObject>($"api/services/light/turn_on", body);
+        dataFetched?.Invoke(this);
     }
     
     [Button]
@@ -20,6 +23,7 @@ public class LightEntity : Entity
     {
         Dictionary<string, object> body = new Dictionary<string, object>();
         body.Add("entity_id", entityId);
-        await RequestClient.Post<StateObject>($"api/services/light/turn_off", body);
+        rawData = await RequestClient.Post<StateObject>($"api/services/light/turn_off", body);
+        dataFetched?.Invoke(this);
     }
 }
