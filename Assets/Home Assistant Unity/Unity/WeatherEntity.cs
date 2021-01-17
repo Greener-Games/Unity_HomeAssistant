@@ -10,16 +10,21 @@ using UnityEngine;
 [Serializable]
 public class WeatherEntity : Entity
 {
-    public float Temperature => (float)rawData.Attributes["temperature"];
-    public float Humidity => (float)rawData.Attributes["humidity"];
-    public float Pressure => (float)rawData.Attributes["pressure"];
-    public float WindBearing => (float)rawData.Attributes["wind_bearing"];
-    public float WindSpeed => (float)rawData.Attributes["wind_speed"];
+    public float Temperature => (float)rawData.attributes["temperature"];
+    public float Humidity => (float)rawData.attributes["humidity"];
+    public float Pressure => (float)rawData.attributes["pressure"];
+    public float WindBearing => (float)rawData.attributes["wind_bearing"];
+    public float WindSpeed => (float)rawData.attributes["wind_speed"];
 
-    public JArray RawForecast => (JArray) rawData.Attributes["forecast"];
+    public JArray RawForecast => (JArray) rawData.attributes["forecast"];
     public List<ForecastObject> forecast = new List<ForecastObject>();
 
-    protected override async Task ProcessFetchedData()
+    void Awake()
+    {
+        dataFetched += DataFetched;
+    }
+
+    void DataFetched()
     {
         foreach (JToken jToken in RawForecast)
         {

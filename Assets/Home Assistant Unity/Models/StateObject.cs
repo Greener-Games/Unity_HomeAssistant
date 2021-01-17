@@ -1,25 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using UnityEngine.Serialization;
 
 [System.Serializable]
 public class StateObject
 {
     [JsonProperty("entity_id")]
-    public string EntityId;
+    public string entityId;
 
     [JsonProperty("state")]
-    public string State;
+    public string state;
 
     [JsonProperty("attributes")]
-    public Dictionary<string, dynamic> Attributes;
+    public Dictionary<string, dynamic> attributes;
 
-    [JsonProperty("last_changed")]
-    public DateTime LastChanged;
+    /// <summary>
+    ///  the last time there was a difference between the previous value and the new.
+    /// </summary>
+    [JsonProperty("last_changed")][CustomDateTimeViewer("dd/MM/yy HH:mm:ss")]
+    public DateTime lastChanged;
 
-    [JsonProperty("last_updated")]
-    public DateTime LastUpdated;
+    /// <summary>
+    /// the last time an entity did send its value to HA
+    /// </summary>
+    [JsonProperty("last_updated")][CustomDateTimeViewer("dd/MM/yy HH:mm:ss")]
+    public DateTime lastUpdated;
 
     [JsonProperty("context")]
-    public ContextObject ContextObject;
+    public ContextObject contextObject;
+
+    public T GetValue<T>(string key) where T : class
+    {
+        if (attributes != null && attributes.ContainsKey(key))
+        {
+            return attributes[key] as T;
+        }
+        else
+        {
+            return default(T);
+        }
+    }
 }

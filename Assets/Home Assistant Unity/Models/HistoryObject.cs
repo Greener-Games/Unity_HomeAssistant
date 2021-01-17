@@ -2,23 +2,37 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
+using Requests;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using UnityEngine;
+using UnityEngine.Events;
 
 [System.Serializable]
 public class HistoryObject
 { 
-    [OdinSerialize][NonSerialized][ShowInInspector]
+    //TODO: handle different history values other than float/ints
+
+    [ShowInInspector]public TimeSpan defaultHistoryTimeSpan = TimeSpan.FromDays(14);
+
+    [OdinSerialize][NonSerialized][ShowInInspector][ReadOnly]
     public List<StateObject> history;
 
-    public List<StateObject> AverageHour => ProcessData(history[0].LastUpdated.RoundDown(TimeSpan.FromHours(1)), TimeSpan.FromHours(1));
+    
+    public List<StateObject> AverageHour => ProcessDataAsFloats(history[0].lastChanged.RoundDown(TimeSpan.FromHours(1)), TimeSpan.FromHours(1));
+    public List<StateObject> AverageDay => ProcessDataAsFloats(history[0].lastChanged.RoundDown(TimeSpan.FromDays(1)), TimeSpan.FromDays(1));
+    public List<StateObject> AverageWeek => ProcessDataAsFloats(history[0].lastChanged.StartOfWeek(DayOfWeek.Monday), TimeSpan.FromDays(7));
 
-    public List<StateObject> AverageDay => ProcessData(history[0].LastUpdated.RoundDown(TimeSpan.FromDays(1)), TimeSpan.FromDays(1));
+    public UnityEvent historyFetched;
 
-    public List<StateObject> AverageWeek => ProcessData(history[0].LastUpdated.StartOfWeek(DayOfWeek.Monday), TimeSpan.FromDays(7));
-
-    List<StateObject> ProcessData(DateTime start, TimeSpan ts)
+    public async Task GetDataHistory(string entityId, TimeSpan timeSpan)
+    {
+        history = await HistoryRequest.GetHistory(entityId, timeSpan,true);
+        historyFetched?.Invoke();
+    }
+    
+    List<StateObject> ProcessDataAsFloats(DateTime start, TimeSpan ts)
     {
         List<StateObject> returnStates = new List<StateObject>();
         List<float> inTime = new List<float>();
@@ -29,9 +43,9 @@ public class HistoryObject
         
         foreach (StateObject stateObject in history)
         {
-            if (float.TryParse(stateObject.State, out float f))
+            if (float.TryParse(stateObject.state, out float f))
             {
-                if (stateObject.LastUpdated < currentTime.Add(ts))
+                if (stateObject.lastChanged < currentTime.Add(ts))
                 {
                     inTime.Add(f);
                 }
@@ -39,8 +53,8 @@ public class HistoryObject
                 {
                     StateObject so = new StateObject
                     {
-                        LastUpdated = currentTime, 
-                        State = inTime.Average().ToString(CultureInfo.InvariantCulture)
+                        lastChanged = currentTime, 
+                        state = inTime.Average().ToString(CultureInfo.InvariantCulture)
                     };
                     returnStates.Add(so);
                     totalProcessed += inTime.Count;
@@ -57,8 +71,8 @@ public class HistoryObject
         {
             StateObject final = new StateObject
             {
-                LastUpdated = currentTime,
-                State = inTime.Average().ToString(CultureInfo.InvariantCulture)
+                lastChanged = currentTime,
+                state = inTime.Average().ToString(CultureInfo.InvariantCulture)
             };
             returnStates.Add(final);
         }

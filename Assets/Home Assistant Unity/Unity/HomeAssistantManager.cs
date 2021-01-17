@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+
 public class HomeAssistantManager : MonoBehaviour
 {
     internal static string hostAddress;

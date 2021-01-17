@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -32,21 +33,6 @@ public class RequestClient : MonoBehaviour
     /// <returns>A <see cref="StateObject" /> representing the current state of the requested <paramref name="entityId" />.</returns>
     public static async Task<StateObject> GetState(string entityId) => await Get<StateObject>($"api/states/{entityId}");
 
-
-    /// <summary>
-    /// Returns an array of state changes in the past. Each object contains further details for the entities
-    /// </summary>
-    /// <returns>A <see cref="StateObject" />History of an entity<paramref name="entityId" />.</returns>
-    public static async Task<HistoryObject> GetHistory(string entityId, DateTimeOffset timeStamp, TimeSpan timeSpan, bool minimalResponse)
-    {
-        List<StateObject> history = (await Get<List<List<StateObject>>>($"api/history/period/{(timeStamp -timeSpan).UtcDateTime:yyyy-MM-dd\\THH:mm:ss}" +
-                                                                        $"?filter_entity_id={entityId}"+
-                                                                        $"&end_time={timeStamp.UtcDateTime:yyyy-MM-dd\\THH:mm:ss}")).First();
-        return new HistoryObject()
-        {
-            history = history,
-        };
-    }
     
     /// <summary>
     /// Performs a GET request
@@ -113,7 +99,20 @@ public class RequestClient : MonoBehaviour
 
             if (!request.isHttpError)
             {
-                return JsonConvert.DeserializeObject<T>(request.downloadHandler.text);
+                JToken token = JToken.Parse(request.downloadHandler.text);
+                
+                if (token is JArray && typeof(T).IsArray) //is array and expecting array all good
+                {
+                    return JsonConvert.DeserializeObject<T>(request.downloadHandler.text);
+                }
+                else if ((token is JArray) && !typeof(T).IsArray) // is an array and not expecting one just return the first
+                {
+                    return JsonConvert.DeserializeObject<List<T>>(request.downloadHandler.text).First();
+                }
+                else //Return the object as expected
+                {
+                    return JsonConvert.DeserializeObject<T>(request.downloadHandler.text);
+                }
             }
             else
             {

@@ -10,21 +10,37 @@ using UnityEngine.Events;
 public abstract class Entity : SerializedMonoBehaviour
 {
     public string entityId;
-    
-    [OdinSerialize][NonSerialized]
-    public StateObject rawData;
+
+    [ShowInInspector]
+    [ReadOnly]
+    public string FriendlyName => rawData != null ? rawData.GetValue<string>("friendly_name") : "";
+
+
+    [OdinSerialize][NonSerialized][ReadOnly]
+    public StateObject rawData = new StateObject();
 
     public UnityAction dataFetched;
 
-    public float refreshRateSeconds;
+    public float refreshRateSeconds = 300;
+    
+    [CustomDateTimeViewer("dd/MM/yy HH:mm:ss")]
     public DateTime lastDataFetchTime;
 
-    public string State => rawData.State;
+    public string State => rawData.state;
     
-    void OnEnable()
+
+    public HistoryObject historyObject = new HistoryObject();
+    public UnityEvent HistoryFetched => historyObject.historyFetched;
+
+    async void Start()
     {
-        FetchData();
-        StartRefreshLoop();
+        await FetchHistory(historyObject.defaultHistoryTimeSpan);
+    }
+
+    async void OnEnable()
+    {
+       await FetchLiveData();
+       await StartRefreshLoop();
     }
 
     async Task StartRefreshLoop()
@@ -32,28 +48,24 @@ public abstract class Entity : SerializedMonoBehaviour
         while (gameObject.activeInHierarchy && enabled)
         {
             await new WaitForSeconds(refreshRateSeconds);
-            await FetchData();
+            await FetchLiveData();
         }
     }
 
-    public virtual async Task FetchData()
+    public virtual async Task FetchLiveData()
     {
         Debug.Log($"Fetching Data {entityId}");
-        await StartFetchData();
-    }
-    
-    async Task StartFetchData()
-    {
+        
         rawData = await RequestClient.GetState(entityId);
         lastDataFetchTime = DateTime.Now;
         
-        await ProcessFetchedData();
         dataFetched?.Invoke();
     }
-
-    protected virtual async Task ProcessFetchedData()
+    
+    public virtual async Task FetchHistory(TimeSpan timeSpan)
     {
-        await Task.Delay(0);
-    }
+        Debug.Log($"Fetching History for {entityId}");
 
+        await historyObject.GetDataHistory(entityId,timeSpan);
+    }
 }
