@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [Serializable]
-public abstract class Entity : SerializedMonoBehaviour
+public class Entity : SerializedMonoBehaviour
 {
     public string entityId;
 
@@ -64,9 +64,7 @@ public abstract class Entity : SerializedMonoBehaviour
     }
 
     protected virtual async Task ProcessData()
-    {
-        
-    }
+    { }
     
     public virtual async Task FetchHistory(TimeSpan timeSpan)
     {
