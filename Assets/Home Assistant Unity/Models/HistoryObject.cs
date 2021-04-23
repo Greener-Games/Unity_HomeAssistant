@@ -17,7 +17,10 @@ public class HistoryObject
     [ShowInInspector]public TimeSpan defaultHistoryTimeSpan = TimeSpan.FromDays(14);
 
     [OdinSerialize][NonSerialized][ShowInInspector][ReadOnly]
-    public List<StateObject> history;
+    public bool isFakeData;
+    
+    [OdinSerialize][NonSerialized][ShowInInspector][ReadOnly]
+    public List<StateObject> history = new List<StateObject>();
 
     
     public List<StateObject> AverageHour => ProcessDataAsFloats(history[0].lastChanged.RoundDown(TimeSpan.FromHours(1)), TimeSpan.FromHours(1));
@@ -26,9 +29,11 @@ public class HistoryObject
 
     public UnityEvent historyFetched;
 
+    
     public async Task GetDataHistory(string entityId, TimeSpan timeSpan)
     {
         history = await HistoryRequest.GetHistory(entityId, timeSpan,true);
+        
         historyFetched?.Invoke();
     }
     

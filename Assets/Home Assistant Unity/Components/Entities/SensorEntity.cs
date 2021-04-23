@@ -3,6 +3,7 @@
 [Serializable]
 public class SensorEntity : Entity
 {
-    public string sensorName;
-    public string sensorValueName;
+    const string SensorTitle = "sensor_title";
+    public string SensorName => currentStateObject != null && currentStateObject.HasAttributeValue(SensorTitle)  ? currentStateObject.GetAttributeValue<string>(SensorTitle) : FriendlyName;
+    public string SensorValueName => currentStateObject != null  && currentStateObject.HasAttributeValue(SensorTitle) ? currentStateObject.GetAttributeValue<string>(SensorTitle) : FriendlyName;
 }

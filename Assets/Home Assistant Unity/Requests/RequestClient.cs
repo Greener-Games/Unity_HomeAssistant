@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Sirenix.Utilities;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -71,10 +72,21 @@ public class RequestClient : MonoBehaviour
     /// Performs A Post Request
     /// </summary>
     /// <param name="path">API Endpoint</param>
+    /// <typeparam name="T">Type expected back</typeparam>
+    /// <returns></returns>
+    public static async Task<T> Post<T>(string path) where T : class
+    {
+        return await Post<T>(path, "");
+    }
+    
+    /// <summary>
+    /// Performs A Post Request
+    /// </summary>
+    /// <param name="path">API Endpoint</param>
     /// <param name="body">Content within the post request</param>
     /// <typeparam name="T">Type expected back</typeparam>
     /// <returns></returns>
-    public static async Task<T> Post<T>(string path, object body) where T : class
+    public static async Task<T> Post<T>(string path, Dictionary<string, object> body) where T : class
     {
         return await Post<T>(path, JsonConvert.SerializeObject(body));
     }
@@ -91,8 +103,13 @@ public class RequestClient : MonoBehaviour
         using (UnityWebRequest request = UnityWebRequest.Post(HomeAssistantManager._hostAddress + path,"")) //No data passed here as need json and have to do manually
         {
             request.SetRequestHeader("Authorization", "Bearer " + HomeAssistantManager._apiKey);
-            byte[] bodyRaw = Encoding.UTF8.GetBytes(body);
-            request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+
+            if (body != null && !body.IsNullOrWhitespace())
+            {
+                byte[] bodyRaw = Encoding.UTF8.GetBytes(body);
+                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+            }
+
             request.SetRequestHeader("Content-Type", "application/json");
             
             await request.SendWebRequest();

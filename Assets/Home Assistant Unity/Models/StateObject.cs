@@ -30,7 +30,13 @@ public class StateObject
     [JsonProperty("context")]
     public ContextObject contextObject;
 
-    public T GetValue<T>(string key)
+    
+    public bool HasAttributeValue(string key)
+    {
+        return attributes != null && attributes.ContainsKey(key);
+    }
+    
+    public T GetAttributeValue<T>(string key)
     {
         if (attributes != null && attributes.ContainsKey(key))
         {

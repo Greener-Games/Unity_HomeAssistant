@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
+using Random = System.Random;
 
 namespace Requests
 {
@@ -25,7 +26,8 @@ namespace Requests
         /// <returns>A <see cref="StateObject" />History of an entity<paramref name="entityId" />.</returns>
         public static async Task<List<StateObject>> GetHistory(string entityId, DateTimeOffset latestTimeStamp, TimeSpan timeSpanToFetch, bool minimalResponse, bool significatChangesOnly)
         {
-            string request = $"api/history/period/{(latestTimeStamp - timeSpanToFetch).UtcDateTime:yyyy-MM-dd\\THH:mm:ss}";
+            DateTimeOffset start = (latestTimeStamp - timeSpanToFetch);
+            string request = $"api/history/period/{start.UtcDateTime:yyyy-MM-dd\\THH:mm:ss}";
             request += $"?filter_entity_id={entityId}";
             request += $"&end_time={latestTimeStamp.UtcDateTime:yyyy-MM-dd\\THH:mm:ss}";
 
@@ -47,6 +49,7 @@ namespace Requests
             catch (Exception e)
             {
                 Debug.Log($"unable to fetch history for {entityId}");
+
                 return new List<StateObject>();
             }
         }
