@@ -25,4 +25,14 @@ public class LightEntity : Entity
         currentStateObject = await ServiceRequest.CallService("light","turn_off",body);
         dataFetched?.Invoke(this);
     }
+    
+    protected override void GenerateSimulationData()
+    {
+        if (historyObject.history.Count == 0 && HomeAssistantManager._generateFakeData)
+        {
+            historyObject.GenerateSimulationBool("on", "off");
+            historyObject.isGeneratedData = true;
+            currentStateObject = historyObject.history[0];
+        }
+    }
 }

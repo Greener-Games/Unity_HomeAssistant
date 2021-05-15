@@ -18,13 +18,13 @@ public class StateObject
     /// <summary>
     ///  the last time there was a difference between the previous value and the new.
     /// </summary>
-    [JsonProperty("last_changed")][CustomDateTimeViewer("dd/MM/yy HH:mm:ss")]
+    [JsonProperty("last_changed")]
     public DateTime lastChanged;
 
     /// <summary>
     /// the last time an entity did send its value to HA
     /// </summary>
-    [JsonProperty("last_updated")][CustomDateTimeViewer("dd/MM/yy HH:mm:ss")]
+    [JsonProperty("last_updated")]
     public DateTime lastUpdated;
 
     [JsonProperty("context")]

@@ -58,14 +58,16 @@ public class RequestClient : MonoBehaviour
                 }
                 catch (Exception e)
                 {
-                    throw new Exception($"Web Request Error in {request.uri} : Error {request.error}");
+                    Debug.LogException(new Exception($"Web Request Error in {request.uri} : Error {request.error}"));
                 }
             }
             else
             {
-                throw new Exception($"Web Request Error in {request.uri} : Error {request.error}");
+                Debug.LogException(new Exception($"Web Request Error in {request.uri} : Error {request.error}"));
             }
         }
+
+        return default;
     }
 
     /// <summary>

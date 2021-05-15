@@ -12,6 +12,8 @@ public class HomeAssistantManager : MonoBehaviour
     
     public static string _hostAddress;
     public static string _apiKey;
+    
+    
     public static bool _generateFakeData;
     
     void Awake()

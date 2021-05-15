@@ -24,10 +24,9 @@ public class Entity : SerializedMonoBehaviour
 
     public float refreshRateSeconds = 300;
     
-    [CustomDateTimeViewer("dd/MM/yy HH:mm:ss")]
     public DateTime lastDataFetchTime;
 
-    public string State => currentStateObject.state;
+    public string State => currentStateObject?.state;
     
 
     public HistoryObject historyObject = new HistoryObject();
@@ -71,7 +70,9 @@ public class Entity : SerializedMonoBehaviour
     }
 
     protected virtual async Task ProcessLiveDataPostFetch()
-    { }
+    {
+        //TODO: can we remove this
+    }
     
     public virtual async Task FetchHistory(TimeSpan timeSpan)
     {
@@ -110,19 +111,9 @@ public class Entity : SerializedMonoBehaviour
     {
         if (historyObject.history.Count == 0 && HomeAssistantManager._generateFakeData)
         {
-            List<StateObject> simulatedData = new List<StateObject>();
-            DateTimeOffset start = DateTimeOffset.Now.AddDays(-14);
-            DateTimeOffset end = DateTimeOffset.Now;
-            while (start < end)
-            {
-                simulatedData.Add(new StateObject()
-                {
-                    state = UnityEngine.Random.Range(0, 50).ToString(),
-                });
-                start = start.AddHours(6);
-            }
-
-            historyObject.history = simulatedData;
+            historyObject.GenerateSimulationInt(0, 50);
+            historyObject.isGeneratedData = true;
+            currentStateObject = historyObject.history[0];
         }
     }
 }

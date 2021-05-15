@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using Sirenix.OdinInspector;
 
 [System.Serializable]
 public class ForecastObject
@@ -16,7 +17,7 @@ public class ForecastObject
     [JsonProperty("templow")]
     public double Templow;
 
-    [JsonProperty("datetime")]
+    [JsonProperty("datetime")][ShowInInspector]
     public DateTimeOffset Datetime;
 
     [JsonProperty("wind_bearing")]
