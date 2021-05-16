@@ -11,7 +11,7 @@ using UnityEngine;
 public class WeatherEntity : Entity
 {
     public float Temperature => (float)currentStateObject.attributes["temperature"];
-    public float Humidity => (float)currentStateObject.attributes["humidity"];
+    public float Humidity => currentStateObject.GetAttributeValue<float>("humidity");
     public float Pressure => (float)currentStateObject.attributes["pressure"];
     public float WindBearing => (float)currentStateObject.attributes["wind_bearing"];
     public float WindSpeed => (float)currentStateObject.attributes["wind_speed"];
@@ -27,5 +27,11 @@ public class WeatherEntity : Entity
             ForecastObject forecastObject = JsonConvert.DeserializeObject<ForecastObject>(forecastRaw.ToString());
             forecast.Add(forecastObject);
         }
+    }
+    
+    protected override void GenerateSimulationData()
+    {
+        historyObject.GenerateSimulationBool("on", "off");
+        currentStateObject = historyObject.history[0];
     }
 }

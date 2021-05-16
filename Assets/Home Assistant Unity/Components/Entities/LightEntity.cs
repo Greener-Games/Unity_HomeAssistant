@@ -28,11 +28,7 @@ public class LightEntity : Entity
     
     protected override void GenerateSimulationData()
     {
-        if (historyObject.history.Count == 0 && HomeAssistantManager._generateFakeData)
-        {
-            historyObject.GenerateSimulationBool("on", "off");
-            historyObject.isGeneratedData = true;
-            currentStateObject = historyObject.history[0];
-        }
+        historyObject.GenerateSimulationBool("on", "off");
+        currentStateObject = historyObject.history[0];
     }
 }

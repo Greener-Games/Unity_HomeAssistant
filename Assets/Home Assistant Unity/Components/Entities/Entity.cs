@@ -10,11 +10,13 @@ using UnityEngine.Events;
 [Serializable]
 public class Entity : SerializedMonoBehaviour
 {
+    const string FriendlyNameKey = "friendly_name";
+    
     public string entityId;
 
     [ShowInInspector]
     [ReadOnly]
-    public string FriendlyName => currentStateObject != null ? currentStateObject.GetAttributeValue<string>("friendly_name") : "";
+    public string FriendlyName => currentStateObject.GetAttributeValue<string>(FriendlyNameKey, entityId);
 
 
     [OdinSerialize][NonSerialized][ReadOnly]
@@ -34,7 +36,6 @@ public class Entity : SerializedMonoBehaviour
 
     async void Start()
     {
-        HistoryFetched.AddListener(GenerateSimulationData);
         await FetchHistory(historyObject.defaultHistoryTimeSpan);
     }
 
@@ -78,6 +79,11 @@ public class Entity : SerializedMonoBehaviour
     {
         Debug.Log($"Fetching History for {entityId}");
         await historyObject.GetDataHistory(entityId,timeSpan);
+
+        if (historyObject.history.Count == 0 && HomeAssistantManager._generateFakeData)
+        {
+            GenerateSimulationData();
+        }
     }
 
     /// <summary>
@@ -109,11 +115,7 @@ public class Entity : SerializedMonoBehaviour
     /// </summary>
     protected virtual void GenerateSimulationData()
     {
-        if (historyObject.history.Count == 0 && HomeAssistantManager._generateFakeData)
-        {
-            historyObject.GenerateSimulationInt(0, 50);
-            historyObject.isGeneratedData = true;
-            currentStateObject = historyObject.history[0];
-        }
+        historyObject.GenerateSimulationInt(0, 50);
+        currentStateObject = historyObject.history[0];
     }
 }

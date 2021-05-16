@@ -30,13 +30,30 @@ public class StateObject
     [JsonProperty("context")]
     public ContextObject contextObject;
 
+
+    public StateObject()
+    {
+        
+    }
+
+    public StateObject(string state)
+    {
+        this.state = state;
+    }
+    
+    public StateObject(string state, DateTime lastUpdated)
+    {
+        this.state = state;
+        this.lastChanged = lastUpdated;
+        this.lastUpdated = lastUpdated;
+    }
     
     public bool HasAttributeValue(string key)
     {
         return attributes != null && attributes.ContainsKey(key);
     }
     
-    public T GetAttributeValue<T>(string key)
+    public T GetAttributeValue<T>(string key, T defaultIfNull = default(T))
     {
         if (attributes != null && attributes.ContainsKey(key))
         {
@@ -44,7 +61,7 @@ public class StateObject
         }
         else
         {
-            return default(T);
+            return defaultIfNull;
         }
     }
 }
