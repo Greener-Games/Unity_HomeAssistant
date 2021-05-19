@@ -19,7 +19,7 @@ namespace Requests
         /// <param name="service"></param>
         /// <param name="body"></param>
         /// <returns></returns>
-        public static async Task<StateObject> CallService(string domain, string service, Dictionary<string, object> body = null)
+        public static async Task<StateObject> CallService(string domain, string service, object body = null)
         {
             return await Post<StateObject>($"api/services/{domain}/{service}", body);
         }

@@ -32,6 +32,6 @@ public class WeatherEntity : Entity
     protected override void GenerateSimulationData()
     {
         historyObject.GenerateSimulationBool("on", "off");
-        currentStateObject = historyObject.history[0];
+        currentStateObject = historyObject[0];
     }
 }

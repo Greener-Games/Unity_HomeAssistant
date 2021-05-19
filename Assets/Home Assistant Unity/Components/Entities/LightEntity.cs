@@ -13,22 +13,20 @@ public class LightEntity : Entity
     [Button]
     public async void TurnOn()
     {
-        Dictionary<string, object> body = new Dictionary<string, object> {{"entity_id", entityId}};
-        currentStateObject = await ServiceRequest.CallService("light","turn_on",body);
+        currentStateObject = await ServiceRequest.CallService("light","turn_on",new { entity_id = this.entityId});
         dataFetched?.Invoke(this);
     }
     
     [Button]
     public async void TurnOff()
     {
-        Dictionary<string, object> body = new Dictionary<string, object> {{"entity_id", entityId}};
-        currentStateObject = await ServiceRequest.CallService("light","turn_off",body);
+        currentStateObject = await ServiceRequest.CallService("light","turn_off", new { entity_id = this.entityId}) ;
         dataFetched?.Invoke(this);
     }
     
     protected override void GenerateSimulationData()
     {
         historyObject.GenerateSimulationBool("on", "off");
-        currentStateObject = historyObject.history[0];
+        currentStateObject = historyObject[0];
     }
 }

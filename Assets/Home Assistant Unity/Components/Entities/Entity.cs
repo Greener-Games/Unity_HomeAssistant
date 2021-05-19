@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Requests;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using UnityEngine;
@@ -21,9 +22,9 @@ public class Entity : SerializedMonoBehaviour
 
     [OdinSerialize][NonSerialized][ReadOnly]
     public StateObject currentStateObject = new StateObject();
+    public HistoryObject historyObject = new HistoryObject();
 
-    public UnityAction<Entity> dataFetched;
-
+    
     public float refreshRateSeconds = 300;
     
     public DateTime lastDataFetchTime;
@@ -31,8 +32,8 @@ public class Entity : SerializedMonoBehaviour
     public string State => currentStateObject?.state;
     
 
-    public HistoryObject historyObject = new HistoryObject();
-    public UnityEvent HistoryFetched => historyObject.historyFetched;
+    [HideInInspector]public UnityAction<Entity> dataFetched;
+    [HideInInspector]public UnityEvent HistoryFetched => historyObject.historyFetched;
 
     async void Start()
     {
@@ -58,15 +59,15 @@ public class Entity : SerializedMonoBehaviour
     {
         Debug.Log($"Fetching Data {entityId}");
         
-        currentStateObject = await RequestClient.GetState(entityId);
+        currentStateObject = await StateClient.GetState(entityId);
         lastDataFetchTime = DateTime.Now;
 
         await ProcessLiveDataPostFetch();
         dataFetched?.Invoke(this);
 
-        if (historyObject.history.Count == 0 || historyObject.history[historyObject.history.Count - 1] != currentStateObject)
+        if (historyObject.Count == 0 || historyObject[historyObject.Count - 1] != currentStateObject)
         {
-            historyObject.history.Add(currentStateObject);
+            historyObject.Add(currentStateObject);
         }
     }
 
@@ -80,7 +81,7 @@ public class Entity : SerializedMonoBehaviour
         Debug.Log($"Fetching History for {entityId}");
         await historyObject.GetDataHistory(entityId,timeSpan);
 
-        if (historyObject.history.Count == 0 && HomeAssistantManager._generateFakeData)
+        if (historyObject.Count == 0 && HomeAssistantManager._generateFakeData)
         {
             GenerateSimulationData();
         }
@@ -116,6 +117,6 @@ public class Entity : SerializedMonoBehaviour
     protected virtual void GenerateSimulationData()
     {
         historyObject.GenerateSimulationInt(0, 50);
-        currentStateObject = historyObject.history[0];
+        currentStateObject = historyObject[0];
     }
 }

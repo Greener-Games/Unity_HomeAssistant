@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using GG.Extensions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sirenix.Utilities;
@@ -28,12 +29,6 @@ public class RequestClient : MonoBehaviour
     public static async Task<ConfigObject> GetConfiguration() => await Get<ConfigObject>("api/config");
     
     
-    /// <summary>
-    /// Returns a state object for specified entity_id
-    /// </summary>
-    /// <returns>A <see cref="StateObject" /> representing the current state of the requested <paramref name="entityId" />.</returns>
-    public static async Task<StateObject> GetState(string entityId) => await Get<StateObject>($"api/states/{entityId}");
-
     
     /// <summary>
     /// Performs a GET request
@@ -81,7 +76,7 @@ public class RequestClient : MonoBehaviour
         return await Post<T>(path, "");
     }
     
-    /// <summary>
+    /*/// <summary>
     /// Performs A Post Request
     /// </summary>
     /// <param name="path">API Endpoint</param>
@@ -91,28 +86,39 @@ public class RequestClient : MonoBehaviour
     public static async Task<T> Post<T>(string path, Dictionary<string, object> body) where T : class
     {
         return await Post<T>(path, JsonConvert.SerializeObject(body));
-    }
+    }*/
 
     /// <summary>
     /// Performs A Post Request
     /// </summary>
     /// <param name="path">API Endpoint</param>
-    /// <param name="body">Content within the post request</param>
+    /// <param name="bodyRawontent within the post request</param>
     /// <typeparam name="T">Type expected back</typeparam>
     /// <returns></returns>
-    public static async Task<T> Post<T>(string path, string body) where T : class
+    public static async Task<T> Post<T>(string path, object bodyRaw) where T : class
     {
         using (UnityWebRequest request = UnityWebRequest.Post(HomeAssistantManager._hostAddress + path,"")) //No data passed here as need json and have to do manually
         {
             request.SetRequestHeader("Authorization", "Bearer " + HomeAssistantManager._apiKey);
 
-            if (body != null && !body.IsNullOrWhitespace())
+            //Convert and add the body if submitted
+            if (bodyRaw != null)
             {
-                byte[] bodyRaw = Encoding.UTF8.GetBytes(body);
-                request.uploadHandler = new UploadHandlerRaw(bodyRaw);
+                string body = "";
+                if (bodyRaw is string s)
+                {
+                    body = s;
+                }
+                else
+                {
+                    body = JsonConvert.SerializeObject(bodyRaw);
+                }
+
+                byte[] bodyBytes = Encoding.UTF8.GetBytes(body);
+                request.uploadHandler = new UploadHandlerRaw(bodyBytes);
+                request.SetRequestHeader("Content-Type", "application/json");
             }
 
-            request.SetRequestHeader("Content-Type", "application/json");
             
             await request.SendWebRequest();
 
