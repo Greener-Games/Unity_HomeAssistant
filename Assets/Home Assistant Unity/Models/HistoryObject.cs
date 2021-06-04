@@ -13,10 +13,10 @@ using UnityEngine.Events;
 public class HistoryObject
 {
     [OdinSerialize][NonSerialized][ShowInInspector][ReadOnly]
-    List<StateObject> history = new List<StateObject>();
+    List<StateObject> historyData = new List<StateObject>();
 
-    public StateObject this[int index] => history[index];
-    public int Count => history.Count;
+    public StateObject this[int index] => historyData[index];
+    public int Count => historyData.Count;
     
     [ShowInInspector]
     public TimeSpan defaultHistoryTimeSpan = TimeSpan.FromDays(14);
@@ -32,12 +32,12 @@ public class HistoryObject
     
     public void Add(StateObject item)
     {
-        history.Add(item);
+        historyData.Add(item);
     }
     
     public async Task GetDataHistory(string entityId, TimeSpan timeSpan)
     {
-        history = (await HistoryClient.GetHistory(entityId, timeSpan,false)).history;
+        historyData = (await HistoryClient.GetHistory(entityId, timeSpan,false));
         historyFetched?.Invoke();
     }
     
@@ -50,7 +50,7 @@ public class HistoryObject
 
         int totalProcessed = 0;
         
-        foreach (StateObject stateObject in history)
+        foreach (StateObject stateObject in historyData)
         {
             if (float.TryParse(stateObject.state, out float f))
             {

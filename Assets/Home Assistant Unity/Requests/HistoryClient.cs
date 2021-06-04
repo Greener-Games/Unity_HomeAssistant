@@ -12,18 +12,13 @@ namespace Requests
 {
     public class HistoryClient : RequestClient
     {
-        public class HistoryResponse
-        {
-            public readonly List<StateObject> history = new List<StateObject>();
-        }
-        
 
         /// <summary>
         ///     Returns the history for a entity ID for the last 24 hours
         /// </summary>
         /// <param name="entityId"></param>
         /// <returns></returns>
-        public static async Task<HistoryResponse> GetHistory(string entityId)
+        public static async Task<List<StateObject>> GetHistory(string entityId)
         {
             return await GetHistory(entityId, DateTime.Now - TimeSpan.FromDays(1), DateTime.Now, false, false);
         }
@@ -36,7 +31,7 @@ namespace Requests
         /// <param name="timeSpanToFetch"></param>
         /// <param name="minimalResponse"></param>
         /// <returns></returns>
-        public static async Task<HistoryResponse> GetHistory(string entityId, TimeSpan timeSpanToFetch, bool minimalResponse)
+        public static async Task<List<StateObject>> GetHistory(string entityId, TimeSpan timeSpanToFetch, bool minimalResponse)
         {
             return await GetHistory(entityId, DateTime.Now - timeSpanToFetch, DateTime.Now, minimalResponse, false);
         }
@@ -49,7 +44,7 @@ namespace Requests
         /// <param name="to"></param>
         /// <param name="minimalResponse"></param>
         /// <returns></returns>
-        public static async Task<HistoryResponse> GetHistory(string entityId, DateTime from, DateTime to, bool minimalResponse)
+        public static async Task<List<StateObject>> GetHistory(string entityId, DateTime from, DateTime to, bool minimalResponse)
         {
             return await GetHistory(entityId, from, to, minimalResponse, false);
         }
@@ -58,8 +53,8 @@ namespace Requests
         ///     Returns an array of state changes in the past. Each object contains further details for the entities
         /// </summary>
         /// <returns>A <see cref="StateObject" />History of an entity<paramref name="entityId" />.</returns>
-        public static async Task<HistoryResponse> GetHistory(string entityId, DateTimeOffset startDate, DateTimeOffset endDate, bool minimalResponse,
-                                                             bool significatChangesOnly)
+        public static async Task<List<StateObject>> GetHistory(string entityId, DateTimeOffset startDate, DateTimeOffset endDate, bool minimalResponse,
+                                                               bool significatChangesOnly)
         {
             string request = $"api/history/period/{startDate.UtcDateTime:yyyy-MM-dd\\THH:mm:ss}";
             request += $"?filter_entity_id={entityId}";
@@ -77,13 +72,13 @@ namespace Requests
 
             try
             {
-                return (await Get<List<HistoryResponse>>(request)).FirstOrDefault();
+                return (await Get<List<List<StateObject>>>(request)).FirstOrDefault();
             }
             catch (Exception e)
             {
                 Debug.Log($"unable to fetch history for {entityId}");
 
-                return new HistoryResponse();
+                return new List<StateObject>();
             }
         }
     }

@@ -37,7 +37,7 @@ public class Entity : SerializedMonoBehaviour
 
     async void Start()
     {
-        await FetchHistory(historyObject.defaultHistoryTimeSpan);
+        await FetchHistory();
     }
 
     async void OnEnable()
@@ -74,6 +74,12 @@ public class Entity : SerializedMonoBehaviour
     protected virtual async Task ProcessLiveDataPostFetch()
     {
         //TODO: can we remove this
+    }
+
+    [Button]
+    public virtual async Task FetchHistory()
+    {
+        await FetchHistory(historyObject.defaultHistoryTimeSpan);
     }
     
     public virtual async Task FetchHistory(TimeSpan timeSpan)

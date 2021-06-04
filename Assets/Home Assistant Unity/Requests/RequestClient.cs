@@ -48,8 +48,8 @@ public class RequestClient : MonoBehaviour
             {
                 try
                 {
+                    Debug.Log(request.uri);
                     return JsonConvert.DeserializeObject<T>(request.downloadHandler.text);
-
                 }
                 catch (Exception e)
                 {
