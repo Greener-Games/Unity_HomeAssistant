@@ -3,7 +3,7 @@
 [Serializable]
 public class SensorEntity : Entity
 {
-    const string SensorTitle = "sensor_title";
-    public string SensorName => currentStateObject.GetAttributeValue<string>(SensorTitle,FriendlyName);
-    public string SensorValueName => currentStateObject.GetAttributeValue<string>(SensorTitle,FriendlyName);
+    const string SensorTitleKey = "sensor_title";
+    
+    public string SensorTitle => currentStateObject.GetAttributeValue<string>(SensorTitleKey,FriendlyName);
 }

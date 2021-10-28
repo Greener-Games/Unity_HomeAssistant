@@ -58,14 +58,15 @@ public class Entity : SerializedMonoBehaviour
     [ReadOnly]
     internal bool isGeneratedData;
 
+    //TODO: have the averages be able to work with different data types other than floats/ints
     [TabGroup("History")]
-    public List<StateObject> AverageHour => historyData.ProcessDataAsFloats(this[0].lastChanged.RoundDown(TimeSpan.FromHours(1)), TimeSpan.FromHours(1));
+    public List<StateObject> AverageHour => historyData.ProcessDataAsFloats(this[0].lastChanged.RoundDown(TimeSpan.FromHours(1)), HistoryListObject.AverageTimeFrames.HOUR);
 
     [TabGroup("History")]
-    public List<StateObject> AverageDay => historyData.ProcessDataAsFloats(this[0].lastChanged.RoundDown(TimeSpan.FromDays(1)), TimeSpan.FromDays(1));
+    public List<StateObject> AverageDay => historyData.ProcessDataAsFloats(this[0].lastChanged.RoundDown(TimeSpan.FromDays(1)), HistoryListObject.AverageTimeFrames.DAY);
 
     [TabGroup("History")]
-    public List<StateObject> AverageWeek => historyData.ProcessDataAsFloats(this[0].lastChanged.StartOfWeek(DayOfWeek.Monday), TimeSpan.FromDays(7));
+    public List<StateObject> AverageWeek => historyData.ProcessDataAsFloats(this[0].lastChanged.StartOfWeek(DayOfWeek.Monday),  HistoryListObject.AverageTimeFrames.WEEK);
     
 
     [HideInInspector]
@@ -125,7 +126,7 @@ public class Entity : SerializedMonoBehaviour
         Debug.Log($"Fetching History for {entityId}");
         historyData = await HistoryClient.GetHistory(entityId, timeSpan, false);
 
-        if (historyData.Count == 0 && HomeAssistantManager._generateFakeData)
+        if (historyData.Count == 0 && SimulationData.SimulateData)
         {
             GenerateSimulationData();
         }

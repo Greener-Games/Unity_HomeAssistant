@@ -8,8 +8,14 @@ using Random = UnityEngine.Random;
 
 public static class SimulationData
 {
+    public static bool SimulateData = false;
+    public static void Initialise(bool simulateData)
+    {
+        SimulateData = simulateData;
+    }
+    
     public static void GenerateSimulationInt(this HistoryListObject historyListObject, int min, int max, TimeSpan historyTimeSpan)
-    { 
+    {
         DateTimeOffset current = DateTimeOffset.Now - historyTimeSpan;
         DateTimeOffset end = DateTimeOffset.Now;
         while (current < end)

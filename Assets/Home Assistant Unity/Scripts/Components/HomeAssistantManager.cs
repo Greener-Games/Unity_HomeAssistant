@@ -10,23 +10,10 @@ public class HomeAssistantManager : MonoBehaviour
     public string address;
     public string longLifeToken;
     
-    public bool generateFakeData;
-    
-    public static bool _generateFakeData;
+    public bool generateSimulatedData;
     
     void Awake()
     {
-        Initialize(address, longLifeToken, generateFakeData);
-    }
-    
-    /// <summary>
-    /// Initialise the client for all future requests
-    /// </summary>
-    /// <param name="address">Home Assistant web address 192.168.X.X:XXXX</param>
-    /// <param name="accessToken">The Home Assistant access token.</param>
-    public static void Initialize(string address, string accessToken, bool generateData)
-    {
-        ClientManager.Initialise(address, accessToken);
-        _generateFakeData = generateData;
+        ClientManager.Initialise(address, longLifeToken);
     }
 }
