@@ -13,20 +13,21 @@ public class LightEntity : Entity
     [Button]
     public async void TurnOn()
     {
-        currentStateObject = await ServiceRequest.CallService("light","turn_on",new { entity_id = this.entityId});
+        currentStateObject = await ServiceClient.CallService("light","turn_on",new { entity_id = this.entityId});
         dataFetched?.Invoke(this);
     }
     
     [Button]
     public async void TurnOff()
     {
-        currentStateObject = await ServiceRequest.CallService("light","turn_off", new { entity_id = this.entityId}) ;
+        currentStateObject = await ServiceClient.CallService("light","turn_off", new { entity_id = this.entityId}) ;
         dataFetched?.Invoke(this);
     }
     
     protected override void GenerateSimulationData()
     {
-        historyObject.GenerateSimulationBool("on", "off");
-        currentStateObject = historyObject[0];
+        historyData.GenerateSimulationBool("on", "off", historyTimeSpan);
+        isGeneratedData = true;
+        currentStateObject = historyData[0];
     }
 }

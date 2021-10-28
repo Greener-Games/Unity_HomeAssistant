@@ -1,6 +1,7 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Runtime.Serialization;
 using Newtonsoft.Json;
-using Sirenix.OdinInspector;
 
 [System.Serializable]
 public class ForecastObject
@@ -17,12 +18,21 @@ public class ForecastObject
     [JsonProperty("templow")]
     public double Templow;
 
-    [JsonProperty("datetime")][ShowInInspector]
+    [JsonProperty("datetime")]
     public DateTimeOffset Datetime;
 
+    [JsonIgnore]
+    public string dateTimeReadable; 
+    
     [JsonProperty("wind_bearing")]
     public double WindBearing;
 
     [JsonProperty("wind_speed")]
     public double WindSpeed;
+    
+    [OnDeserialized]
+    internal void OnDeserializedMethod(StreamingContext context)
+    {
+        dateTimeReadable = Datetime.ToString();
+    }
 }

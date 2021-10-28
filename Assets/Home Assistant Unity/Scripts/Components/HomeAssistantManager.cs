@@ -12,11 +12,6 @@ public class HomeAssistantManager : MonoBehaviour
     
     public bool generateFakeData;
     
-    
-    public static string _hostAddress;
-    public static string _apiKey;
-    
-    
     public static bool _generateFakeData;
     
     void Awake()
@@ -31,8 +26,7 @@ public class HomeAssistantManager : MonoBehaviour
     /// <param name="accessToken">The Home Assistant access token.</param>
     public static void Initialize(string address, string accessToken, bool generateData)
     {
-        _hostAddress = address;
-        _apiKey = accessToken;
+        ClientManager.Initialise(address, accessToken);
         _generateFakeData = generateData;
     }
 }
