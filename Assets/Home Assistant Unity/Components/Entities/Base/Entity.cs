@@ -58,6 +58,8 @@ public partial class Entity : SerializedMonoBehaviour
         }
     }
 
+    [Button]
+    [TabGroup("Current")]
     public virtual async Task FetchLiveData()
     {
         Debug.Log($"Fetching Data {entityId}");
