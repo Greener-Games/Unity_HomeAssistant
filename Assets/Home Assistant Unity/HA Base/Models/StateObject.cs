@@ -58,7 +58,15 @@ public class StateObject
     {
         if (attributes != null && attributes.ContainsKey(key))
         {
-            return (T)attributes[key];
+            try
+            {
+                return (T)attributes[key];
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"unable to cast {key} from {typeof(T)} to {attributes[key].GetType()}");
+                return defaultIfNull;
+            }
         }
         else
         {

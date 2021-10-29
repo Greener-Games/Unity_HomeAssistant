@@ -62,6 +62,7 @@ public partial class Entity : SerializedMonoBehaviour
     [TabGroup("Current")]
     public virtual async Task FetchLiveData()
     {
+        
         Debug.Log($"Fetching Data {entityId}");
 
         currentStateObject = await StateClientManager.GetState(entityId);
