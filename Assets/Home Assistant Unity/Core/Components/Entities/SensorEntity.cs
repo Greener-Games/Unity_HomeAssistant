@@ -1,7 +1,9 @@
 ﻿using System;
 
 [Serializable]
-public class SensorEntity : Entity
+[EntityWorldGraphic("Sensor Marker")]
+[EntityUiElement("Sensor Popup")]
+public class SensorEntity : Entity              
 {
     const string SensorTitleKey = "sensor_title";
     

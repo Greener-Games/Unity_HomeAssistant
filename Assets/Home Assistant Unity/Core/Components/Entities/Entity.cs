@@ -12,6 +12,7 @@ using UnityEngine.Events;
 #endregion
 
 [Serializable]
+[EntityWorldGraphic("World Marker")]
 public class Entity : SerializedMonoBehaviour
 {
     const string FriendlyNameKey = "friendly_name";
@@ -48,13 +49,12 @@ public class Entity : SerializedMonoBehaviour
     public HistoryListObject historyData = new HistoryListObject();
 
     [TabGroup("History")]
-    [ShowInInspector]
-    public TimeSpan historyTimeSpan = TimeSpan.FromDays(14);
+    public int historyDays;
+    [TabGroup("History")]
+    public int historyHours;
+    public TimeSpan HistoryTimeSpan => new TimeSpan(historyDays, historyHours,0,0);
 
     [TabGroup("History")]
-    [OdinSerialize]
-    [NonSerialized]
-    [ShowInInspector]
     [ReadOnly]
     internal bool isGeneratedData;
 
@@ -118,7 +118,7 @@ public class Entity : SerializedMonoBehaviour
     [Button][TabGroup("History")]
     public virtual async Task FetchHistory()
     {
-        await FetchHistory(historyTimeSpan);
+        await FetchHistory(HistoryTimeSpan);
     }
 
     public virtual async Task FetchHistory(TimeSpan timeSpan)
@@ -161,8 +161,16 @@ public class Entity : SerializedMonoBehaviour
     /// </summary>
     protected virtual void GenerateSimulationData()
     {
-        historyData.GenerateSimulationInt(0, 50, historyTimeSpan);
+        historyData.GenerateSimulationInt(0, 50, HistoryTimeSpan);
         isGeneratedData = true;
         currentStateObject = historyData[0];
+    }
+
+    /// <summary>
+    /// Draw a world marker for the gizmo at the location
+    /// </summary>
+    void OnDrawGizmos()
+    {
+        Gizmos.DrawSphere(transform.position, 0.1f);
     }
 }

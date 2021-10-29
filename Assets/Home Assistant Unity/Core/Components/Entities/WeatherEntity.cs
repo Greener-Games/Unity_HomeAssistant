@@ -33,7 +33,7 @@ public class WeatherEntity : Entity
     
     protected override void GenerateSimulationData()
     {
-        historyData.GenerateSimulationBool("on", "off", historyTimeSpan);
+        historyData.GenerateSimulationBool("on", "off", HistoryTimeSpan);
         currentStateObject = historyData[0];
         isGeneratedData = true;
     }

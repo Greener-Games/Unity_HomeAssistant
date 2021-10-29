@@ -13,7 +13,7 @@ public class StateObject
     public string state;
 
     [JsonProperty("attributes")]
-    public Dictionary<string, dynamic> attributes;
+    public Dictionary<string, object> attributes;
 
     /// <summary>
     ///  the last time there was a difference between the previous value and the new.

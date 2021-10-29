@@ -6,6 +6,8 @@ using Sirenix.OdinInspector;
 using UnityEngine;
 
 [Serializable]
+[EntityWorldGraphic("Light Marker")]
+[EntityUiElement("Light Popup")]
 public class LightEntity : Entity
 {
     public bool LightOn => State == "on";
@@ -26,7 +28,7 @@ public class LightEntity : Entity
     
     protected override void GenerateSimulationData()
     {
-        historyData.GenerateSimulationBool("on", "off", historyTimeSpan);
+        historyData.GenerateSimulationBool("on", "off", HistoryTimeSpan);
         isGeneratedData = true;
         currentStateObject = historyData[0];
     }
