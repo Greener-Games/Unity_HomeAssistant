@@ -35,7 +35,7 @@ public class MediaPlayerEntity : Entity
     
     //Used to track the position of the current media for when its needed.
     Coroutine mediaTimeTracker;
-    public float actualMediaPosition;
+    float actualMediaPosition;
     public UnityAction<float> mediaPositionUpdated;
 
     protected override void ProcessData()
@@ -43,7 +43,6 @@ public class MediaPlayerEntity : Entity
         base.ProcessData();
         
         float distance = (float)(DateTime.Now - MediaUpdatePositionTime).TotalSeconds;
-        Debug.Log(distance);
         actualMediaPosition = distance + (float)MediaUpdatedPosition;
 
         if (mediaTimeTracker != null)
@@ -61,6 +60,12 @@ public class MediaPlayerEntity : Entity
             actualMediaPosition += Time.deltaTime;
             mediaPositionUpdated?.Invoke(actualMediaPosition);
             yield return new WaitForEndOfFrame();
+
+            if (actualMediaPosition > (MediaDuration + 1))
+            {
+                FetchLiveData();
+                StopCoroutine(mediaTimeTracker);
+            }
         }
     }
 }
