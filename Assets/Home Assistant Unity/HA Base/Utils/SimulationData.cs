@@ -9,6 +9,7 @@ using Random = UnityEngine.Random;
 public static class SimulationData
 {
     public static bool SimulateData = false;
+    
     public static void Initialise(bool simulateData)
     {
         SimulateData = simulateData;

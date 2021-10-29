@@ -26,7 +26,7 @@ namespace Requests
         
         public static async Task<T> Post<T>(string path, object bodyRaw) where T : class
         {
-            return await ClientManager.Post<T>(path, "");
+            return await ClientManager.Post<T>(path, bodyRaw);
         }
 
     }

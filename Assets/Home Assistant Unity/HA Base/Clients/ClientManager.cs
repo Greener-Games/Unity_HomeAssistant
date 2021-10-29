@@ -111,7 +111,7 @@ public class ClientManager
                 }
                 catch (Exception e)
                 {
-                    return null;
+                    return default(T);
                 }
             //Return the object as expected
             default:

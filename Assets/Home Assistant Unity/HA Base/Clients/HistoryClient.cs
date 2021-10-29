@@ -35,12 +35,13 @@ namespace Requests
         /// <param name="entityId"></param>
         /// <param name="timeSpanToFetch"></param>
         /// <param name="minimalResponse"></param>
+        /// <param name="significantlyChangesOnly"></param>
         /// <returns></returns>
-        public static async Task<HistoryListObject> GetHistory(string entityId, TimeSpan timeSpanToFetch, bool minimalResponse)
+        public static async Task<HistoryListObject> GetHistory(string entityId, TimeSpan timeSpanToFetch, bool minimalResponse = true, bool significantlyChangesOnly = false)
         {
-            return await GetHistory(entityId, DateTime.Now - timeSpanToFetch, DateTime.Now, minimalResponse, false);
+            return await GetHistory(entityId, DateTime.Now - timeSpanToFetch, DateTime.Now, minimalResponse, significantlyChangesOnly);
         }
-
+        
         /// <summary>
         ///     Returns the history for an entity between <paramref name="from" /> to <paramref name="to" />
         /// </summary>
