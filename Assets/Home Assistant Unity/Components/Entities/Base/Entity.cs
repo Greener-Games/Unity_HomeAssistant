@@ -36,7 +36,6 @@ public partial class Entity : SerializedMonoBehaviour
     [TabGroup("Current")]
     public DateTime lastDataFetchTime;
     
-    [HideInInspector]
     public UnityAction<Entity> dataFetched;
 
     protected virtual async void Start()
