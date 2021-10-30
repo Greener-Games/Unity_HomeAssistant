@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Requests
 {
-    public class StateClientManager : ClientBase
+    public class StateClient : ClientBase
     {
 
         /// <summary>

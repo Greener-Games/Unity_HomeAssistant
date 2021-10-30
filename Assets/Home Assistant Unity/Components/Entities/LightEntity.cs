@@ -18,47 +18,26 @@ public class LightEntity : Entity
     [Button]
     public async void TurnOn()
     {
-        StateObject data = await ServiceClient.CallService("light","turn_on",new { entity_id = this.entityId});
-
-        if (data != null)
-        {
-            currentStateObject = data;
-        }
-
-        dataFetched?.Invoke(this);
+        await EntityRequest(ServiceClient.CallService("light","turn_on",new { entity_id = this.entityId}));
     }
     
     [Button]
     public async void TurnOff()
     {
-        StateObject data = await ServiceClient.CallService("light","turn_off", new { entity_id = this.entityId}) ;
-        
-        if (data != null)
-        {
-            currentStateObject = data;
-        }
-        
-        dataFetched?.Invoke(this);
+        await EntityRequest(ServiceClient.CallService("light","turn_off", new { entity_id = this.entityId}));
     }
     
     [Button]
     public async void SetBrightness(float brightness)
     {
-        StateObject data = await ServiceClient.CallService("light","turn_on", new
+        await EntityRequest(ServiceClient.CallService("light","turn_on", new
         {
             entity_id = this.entityId,
             brightness = brightness
-        }) ;
-        
-        if (data != null)
-        {
-            currentStateObject = data;
-        }
-        
-        dataFetched?.Invoke(this);
+        }));
     }
     
-    protected override void GenerateSimulationData()
+    protected override void GenerateHistoricSimulationData()
     {
         historyData.GenerateSimulationBool("on", "off", HistoryTimeSpan);
         isGeneratedData = true;

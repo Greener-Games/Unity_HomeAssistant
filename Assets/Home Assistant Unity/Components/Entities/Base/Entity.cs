@@ -22,22 +22,9 @@ public partial class Entity : SerializedMonoBehaviour
     [TabGroup("Data")]
     public float refreshRateSeconds = 300;
 
-    [TabGroup("Current")]
-    [ShowInInspector]
-    [ReadOnly]
-    public string State => currentStateObject?.state;
+    const float requestRefresh = 0.5f;
+    bool isRequestingData;
     
-    [TabGroup("Current")]
-    [OdinSerialize]
-    [NonSerialized]
-    [ReadOnly]
-    public StateObject currentStateObject = new StateObject();
-
-    [TabGroup("Current")]
-    public DateTime lastDataFetchTime;
-    
-    public UnityAction<Entity> dataFetched;
-
     protected virtual async void Start()
     {
         await FetchHistory();
@@ -48,55 +35,38 @@ public partial class Entity : SerializedMonoBehaviour
         await FetchLiveData();
         await StartRefreshLoop();
     }
-
-    async Task StartRefreshLoop()
-    {
-        while (gameObject.activeInHierarchy && enabled)
-        {
-            await new WaitForSeconds(refreshRateSeconds);
-            await FetchLiveData();
-        }
-    }
-
-    [Button]
-    [TabGroup("Current")]
-    public virtual async Task FetchLiveData()
-    {
-        
-        Debug.Log($"Fetching Data {entityId}");
-
-        currentStateObject = await StateClientManager.GetState(entityId);
-        lastDataFetchTime = DateTime.Now;
-        
-        if (historyData.Count == 0 || historyData[historyData.Count - 1] != currentStateObject)
-        {
-            historyData.Add(currentStateObject);
-        }
-        
-        ProcessData();
-        dataFetched?.Invoke(this);
-    }
-
-    protected virtual void ProcessData()
-    {
-      //handle any processing of data after fetching here  
-    }
     
-    /// <summary>
-    ///     Generate a series of fake data if the manager is set to do so, used for testing when the HA server is unreachable
-    /// </summary>
-    protected virtual void GenerateSimulationData()
-    {
-        historyData.GenerateSimulationInt(0, 50, HistoryTimeSpan);
-        isGeneratedData = true;
-        currentStateObject = historyData[0];
-    }
-
     /// <summary>
     /// Draw a world marker for the gizmo at the location
     /// </summary>
     void OnDrawGizmos()
     {
         Gizmos.DrawSphere(transform.position, 0.1f);
+    }
+
+    protected async Task EntityRequest(Task<StateObject> request, float refreshRate = requestRefresh)
+    {
+        if (isRequestingData)
+        {
+            //if we are mid request then dont send more data to avoid server conflicts
+            return;
+        }
+
+        isRequestingData = true;
+        StateObject data = await request;
+        
+        if (data != null)
+        {
+            currentStateObject = data;
+            dataFetched?.Invoke(this);
+        }
+        else
+        {
+            //if we dont get any data back, just wait and fetch the latest to ensure we are correct
+            await new WaitForSeconds(refreshRate);
+            await FetchLiveData();
+        }
+
+        isRequestingData = false;
     }
 }

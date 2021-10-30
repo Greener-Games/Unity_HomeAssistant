@@ -51,9 +51,19 @@ public partial class Entity
 
         if (historyData.Count == 0 && SimulationData.SimulateData)
         {
-            GenerateSimulationData();
+            GenerateHistoricSimulationData();
         }
         
         historyFetched?.Invoke();
+    }
+    
+    /// <summary>
+    ///     Generate a series of fake data if the manager is set to do so, used for testing when the HA server is unreachable
+    /// </summary>
+    protected virtual void GenerateHistoricSimulationData()
+    {
+        historyData.GenerateSimulationInt(0, 50, HistoryTimeSpan);
+        isGeneratedData = true;
+        currentStateObject = historyData[0];
     }
 }

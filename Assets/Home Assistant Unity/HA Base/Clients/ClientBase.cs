@@ -14,16 +14,35 @@ namespace Requests
             return result.Message == "API running.";
         }
         
+        /// <summary>
+        /// Perform a Get Request
+        /// </summary>
+        /// <param name="path"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public static async Task<T> Get<T>(string path) where T : class
         {
             return await ClientManager.Get<T>(path);
         }
         
+        /// <summary>
+        /// Perform a Post request
+        /// </summary>
+        /// <param name="path"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public static async Task<T> Post<T>(string path) where T : class
         {
             return await Post<T>(path, "");
         }
         
+        /// <summary>
+        /// Perform a Post Request
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="bodyRaw"></param>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         public static async Task<T> Post<T>(string path, object bodyRaw) where T : class
         {
             return await ClientManager.Post<T>(path, bodyRaw);
