@@ -91,4 +91,16 @@ public class MediaPlayerEntity : Entity
             Play();
         }
     }
+    
+        [Button]
+        public async void Next()
+        {
+            await EntityRequest(ServiceClient.CallService("media_player","media_next_track",new { entity_id = this.entityId}), 1.5f);
+        }
+        
+        [Button]
+        public async void Previous()
+        {
+            await EntityRequest(ServiceClient.CallService("media_player","media_previous_track",new { entity_id = this.entityId}),1.5f);
+        }                                                                                                                                         
 }
